@@ -1,1 +1,616 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>मेरा नोटहरू</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1E9D8;
+    --paper-shadow:#E4D8B8;
+    --ink:#23283A;
+    --ink-soft:#6B6250;
+    --rule-line:#D9CBA3;
+    --margin-red:#A73B2D;
+    --accent:#C98A2C;
+    --accent-dark:#9C6A1B;
+    --danger:#8B3A3A;
+    --danger-bg:#F3DEDA;
+    --hole:#CBBE95;
+    --hole-shadow:#8f8459;
+    --sidebar-bg:#E9DFC4;
+  }
 
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:'Noto Sans Devanagari','Noto Sans',sans-serif;
+    background:var(--paper-shadow);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .app{
+    display:flex;
+    height:100vh;
+    overflow:hidden;
+  }
+
+  /* Spiral binding strip */
+  .binding{
+    width:28px;
+    flex:0 0 28px;
+    background:linear-gradient(180deg,#DED0A6,#D2C28F);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:18px 0;
+    gap:22px;
+    box-shadow:inset -3px 0 6px rgba(0,0,0,0.08);
+  }
+  .binding .hole{
+    width:11px;
+    height:11px;
+    border-radius:50%;
+    background:var(--hole-shadow);
+    box-shadow:inset 0 1px 2px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.3);
+  }
+
+  /* Sidebar */
+  .sidebar{
+    width:280px;
+    flex:0 0 280px;
+    background:var(--sidebar-bg);
+    display:flex;
+    flex-direction:column;
+    border-right:1px solid var(--paper-shadow);
+    box-shadow:2px 0 10px rgba(0,0,0,0.05);
+  }
+  .sidebar-header{
+    padding:20px 18px 12px;
+  }
+  .sidebar-header h1{
+    font-family:'Kalam',cursive;
+    font-size:26px;
+    margin:0 0 14px;
+    color:var(--ink);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .sidebar-header h1 .dot{
+    width:9px;height:9px;border-radius:50%;
+    background:var(--margin-red);
+    display:inline-block;
+  }
+
+  .new-note-btn{
+    width:100%;
+    padding:10px 14px;
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    border-radius:6px;
+    font-family:'Noto Sans Devanagari',sans-serif;
+    font-weight:600;
+    font-size:14.5px;
+    cursor:pointer;
+    transition:background .15s ease, transform .1s ease;
+  }
+  .new-note-btn:hover{ background:var(--accent-dark); }
+  .new-note-btn:active{ transform:scale(0.98); }
+
+  .search-wrap{
+    padding:12px 18px;
+  }
+  .search-wrap input{
+    width:100%;
+    padding:8px 10px;
+    border:1px solid var(--rule-line);
+    border-radius:6px;
+    background:#FBF7EC;
+    font-family:'Noto Sans Devanagari',sans-serif;
+    font-size:13.5px;
+    color:var(--ink);
+  }
+  .search-wrap input:focus{
+    outline:2px solid var(--accent);
+    outline-offset:1px;
+  }
+
+  .notes-list{
+    flex:1;
+    overflow-y:auto;
+    padding:4px 10px 16px;
+  }
+  .note-tab{
+    position:relative;
+    padding:11px 14px 11px 16px;
+    margin-bottom:6px;
+    background:#FBF7EC;
+    border-radius:4px 10px 10px 4px;
+    cursor:pointer;
+    border-left:5px solid var(--rule-line);
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .note-tab:hover{ background:#FFFDF6; }
+  .note-tab.active{
+    border-left-color:var(--accent);
+    background:#FFFDF6;
+    box-shadow:0 2px 6px rgba(0,0,0,0.08);
+  }
+  .note-tab .tab-title{
+    font-family:'Kalam',cursive;
+    font-size:16px;
+    font-weight:700;
+    color:var(--ink);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    margin-bottom:3px;
+  }
+  .note-tab .tab-preview{
+    font-size:12px;
+    color:var(--ink-soft);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .note-tab .tab-time{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    color:var(--ink-soft);
+    margin-top:4px;
+    display:block;
+  }
+  .note-tab .tab-delete{
+    position:absolute;
+    top:8px; right:8px;
+    width:22px;height:22px;
+    border:none;
+    background:transparent;
+    color:var(--ink-soft);
+    border-radius:50%;
+    cursor:pointer;
+    font-size:14px;
+    line-height:22px;
+    text-align:center;
+    opacity:0;
+    transition:opacity .15s ease, background .15s ease, color .15s ease;
+  }
+  .note-tab:hover .tab-delete{ opacity:1; }
+  .note-tab .tab-delete:hover{ background:var(--danger-bg); color:var(--danger); }
+
+  .empty-list{
+    padding:30px 16px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:13.5px;
+  }
+
+  /* Main editor page */
+  .page-wrap{
+    flex:1;
+    overflow-y:auto;
+    background:var(--paper);
+    position:relative;
+  }
+  .page{
+    max-width:760px;
+    margin:0 auto;
+    min-height:100%;
+    padding:36px 40px 60px 64px;
+    position:relative;
+  }
+  .page::before{
+    content:"";
+    position:absolute;
+    top:0; bottom:0;
+    left:44px;
+    width:2px;
+    background:var(--margin-red);
+    opacity:0.55;
+  }
+
+  .editor-topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:18px;
+  }
+  .back-btn{
+    display:none;
+    border:none;
+    background:none;
+    font-size:20px;
+    color:var(--ink);
+    cursor:pointer;
+    padding:4px 8px;
+  }
+  .status{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-left:auto;
+  }
+
+  .title-input{
+    width:100%;
+    border:none;
+    background:transparent;
+    font-family:'Kalam',cursive;
+    font-size:32px;
+    font-weight:700;
+    color:var(--ink);
+    padding:0 0 10px 0;
+    margin-bottom:6px;
+    border-bottom:1px dashed var(--rule-line);
+  }
+  .title-input:focus{ outline:none; border-bottom-color:var(--accent); }
+  .title-input::placeholder{ color:#B7AD8F; }
+
+  .meta-row{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-bottom:18px;
+  }
+
+  .body-textarea{
+    width:100%;
+    min-height:60vh;
+    border:none;
+    background:
+      repeating-linear-gradient(
+        var(--paper),
+        var(--paper) 30px,
+        var(--rule-line) 31px,
+        var(--paper) 32px
+      );
+    background-position: 0 8px;
+    font-family:'Noto Sans Devanagari','Noto Sans',sans-serif;
+    font-size:16.5px;
+    line-height:32px;
+    color:var(--ink);
+    resize:none;
+    padding:0;
+  }
+  .body-textarea:focus{ outline:none; }
+  .body-textarea::placeholder{ color:#B7AD8F; }
+
+  .empty-editor{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    height:100%;
+    text-align:center;
+    color:var(--ink-soft);
+    padding:40px;
+  }
+  .empty-editor .big{
+    font-family:'Kalam',cursive;
+    font-size:26px;
+    color:var(--ink);
+    margin-bottom:10px;
+  }
+  .empty-editor button{
+    margin-top:16px;
+    padding:10px 20px;
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    border-radius:6px;
+    font-family:'Noto Sans Devanagari',sans-serif;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .empty-editor button:hover{ background:var(--accent-dark); }
+
+  .delete-confirm{
+    position:fixed;
+    inset:0;
+    background:rgba(35,40,58,0.35);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:50;
+  }
+  .delete-confirm .card{
+    background:var(--paper);
+    padding:22px 26px;
+    border-radius:10px;
+    max-width:320px;
+    box-shadow:0 12px 30px rgba(0,0,0,0.25);
+  }
+  .delete-confirm h3{
+    font-family:'Kalam',cursive;
+    font-size:20px;
+    margin:0 0 10px;
+  }
+  .delete-confirm p{ font-size:13.5px; color:var(--ink-soft); margin:0 0 18px; }
+  .delete-confirm .row{ display:flex; gap:10px; justify-content:flex-end; }
+  .delete-confirm button{
+    padding:8px 14px;
+    border-radius:6px;
+    border:none;
+    font-family:'Noto Sans Devanagari',sans-serif;
+    font-size:13.5px;
+    cursor:pointer;
+  }
+  .delete-confirm .cancel{ background:#E4D8B8; color:var(--ink); }
+  .delete-confirm .confirm{ background:var(--danger); color:#fff; }
+
+  @media (max-width:760px){
+    .sidebar{ width:100%; flex-basis:100%; border-right:none; }
+    .binding{ display:none; }
+    .app.note-open .sidebar{ display:none; }
+    .app:not(.note-open) .page-wrap{ display:none; }
+    .back-btn{ display:inline-block; }
+    .page{ padding:24px 20px 40px 40px; }
+    .page::before{ left:22px; }
+    .title-input{ font-size:26px; }
+  }
+
+  ::-webkit-scrollbar{ width:10px; }
+  ::-webkit-scrollbar-thumb{ background:var(--hole-shadow); border-radius:5px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <div class="binding" id="binding"></div>
+
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h1><span class="dot"></span>मेरा नोटहरू</h1>
+      <button class="new-note-btn" id="newNoteBtn">+ नयाँ नोट</button>
+    </div>
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="नोट खोज्नुहोस्...">
+    </div>
+    <div class="notes-list" id="notesList"></div>
+  </div>
+
+  <div class="page-wrap">
+    <div class="page" id="pageContent"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'notes';
+  let state = { notes: [], activeId: null, filter: '' };
+  let saveTimer = null;
+
+  const notesListEl = document.getElementById('notesList');
+  const pageContentEl = document.getElementById('pageContent');
+  const searchInput = document.getElementById('searchInput');
+  const newNoteBtn = document.getElementById('newNoteBtn');
+  const appEl = document.getElementById('app');
+  const bindingEl = document.getElementById('binding');
+
+  for(let i=0;i<14;i++){
+    const h = document.createElement('div');
+    h.className = 'hole';
+    bindingEl.appendChild(h);
+  }
+
+  function uid(){ return 'n_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); }
+
+  function formatTime(ts){
+    const d = new Date(ts);
+    const now = new Date();
+    const sameDay = d.toDateString() === now.toDateString();
+    const time = d.toLocaleTimeString('ne-NP',{hour:'2-digit',minute:'2-digit'});
+    if(sameDay) return 'आज, ' + time;
+    return d.toLocaleDateString('ne-NP',{day:'numeric',month:'short'}) + ', ' + time;
+  }
+
+  async function loadNotes(){
+    try{
+      const res = await window.storage.get(STORAGE_KEY, false);
+      if(res && res.value){
+        state.notes = JSON.parse(res.value);
+      }
+    }catch(e){
+      state.notes = [];
+    }
+    if(state.notes.length){
+      state.activeId = state.notes[0].id;
+    }
+    render();
+  }
+
+  async function persist(){
+    try{
+      await window.storage.set(STORAGE_KEY, JSON.stringify(state.notes), false);
+      setStatus('बचत भयो ✓');
+    }catch(e){
+      setStatus('बचत गर्न सकिएन');
+    }
+  }
+
+  function scheduleSave(){
+    setStatus('बचत हुँदैछ...');
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(persist, 500);
+  }
+
+  function setStatus(text){
+    const el = document.getElementById('statusEl');
+    if(el) el.textContent = text;
+  }
+
+  function createNote(){
+    const note = { id: uid(), title:'', content:'', updatedAt: Date.now() };
+    state.notes.unshift(note);
+    state.activeId = note.id;
+    render();
+    setMobileOpen(true);
+    const titleInput = document.getElementById('titleInput');
+    if(titleInput) titleInput.focus();
+    persist();
+  }
+
+  function deleteNote(id){
+    state.notes = state.notes.filter(n => n.id !== id);
+    if(state.activeId === id){
+      state.activeId = state.notes.length ? state.notes[0].id : null;
+    }
+    render();
+    persist();
+  }
+
+  function selectNote(id){
+    state.activeId = id;
+    render();
+    setMobileOpen(true);
+  }
+
+  function setMobileOpen(open){
+    appEl.classList.toggle('note-open', open);
+  }
+
+  function updateActiveNote(field, value){
+    const note = state.notes.find(n => n.id === state.activeId);
+    if(!note) return;
+    note[field] = value;
+    note.updatedAt = Date.now();
+    renderSidebarOnly();
+    scheduleSave();
+  }
+
+  function getFilteredNotes(){
+    const f = state.filter.trim().toLowerCase();
+    if(!f) return state.notes;
+    return state.notes.filter(n =>
+      (n.title||'').toLowerCase().includes(f) ||
+      (n.content||'').toLowerCase().includes(f)
+    );
+  }
+
+  function renderSidebarOnly(){
+    const notes = getFilteredNotes();
+    if(!notes.length){
+      notesListEl.innerHTML = '<div class="empty-list">' +
+        (state.filter ? 'खोजी नमिलेको नोट।' : 'अहिलेसम्म कुनै नोट छैन।<br>माथिबाट "+ नयाँ नोट" थिच्नुहोस्।') +
+        '</div>';
+      return;
+    }
+    notesListEl.innerHTML = notes.map(n => {
+      const title = n.title && n.title.trim() ? escapeHtml(n.title) : 'शीर्षकविहीन नोट';
+      const preview = (n.content||'').trim().slice(0,60) || 'खाली नोट';
+      const active = n.id === state.activeId ? ' active' : '';
+      return `<div class="note-tab${active}" data-id="${n.id}">
+        <button class="tab-delete" data-delete="${n.id}" title="मेटाउनुहोस्">✕</button>
+        <div class="tab-title">${title}</div>
+        <div class="tab-preview">${escapeHtml(preview)}</div>
+        <span class="tab-time">${formatTime(n.updatedAt)}</span>
+      </div>`;
+    }).join('');
+
+    notesListEl.querySelectorAll('.note-tab').forEach(el => {
+      el.addEventListener('click', (e) => {
+        if(e.target.closest('.tab-delete')) return;
+        selectNote(el.dataset.id);
+      });
+    });
+    notesListEl.querySelectorAll('.tab-delete').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        confirmDelete(btn.dataset.delete);
+      });
+    });
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function confirmDelete(id){
+    const note = state.notes.find(n => n.id === id);
+    const title = note && note.title ? note.title : 'यो नोट';
+    const overlay = document.createElement('div');
+    overlay.className = 'delete-confirm';
+    overlay.innerHTML = `<div class="card">
+        <h3>नोट मेटाउने?</h3>
+        <p>"${escapeHtml(title)}" सधैंको लागि मेटिनेछ। यो पूर्ववत गर्न सकिँदैन।</p>
+        <div class="row">
+          <button class="cancel">रद्द गर्नुहोस्</button>
+          <button class="confirm">मेटाउनुहोस्</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelector('.cancel').addEventListener('click', () => overlay.remove());
+    overlay.querySelector('.confirm').addEventListener('click', () => {
+      deleteNote(id);
+      overlay.remove();
+    });
+    overlay.addEventListener('click', (e) => { if(e.target === overlay) overlay.remove(); });
+  }
+
+  function renderEditor(){
+    const note = state.notes.find(n => n.id === state.activeId);
+    if(!note){
+      pageContentEl.innerHTML = `<div class="empty-editor">
+        <div class="big">✎ कुनै नोट खुला छैन</div>
+        <div>बायाँबाट नोट छान्नुहोस् वा नयाँ नोट सुरु गर्नुहोस्।</div>
+        <button id="emptyNewBtn">+ नयाँ नोट लेख्नुहोस्</button>
+      </div>`;
+      const btn = document.getElementById('emptyNewBtn');
+      if(btn) btn.addEventListener('click', createNote);
+      return;
+    }
+    const wordCount = (note.content||'').trim().split(/\s+/).filter(Boolean).length;
+    pageContentEl.innerHTML = `
+      <div class="editor-topbar">
+        <button class="back-btn" id="backBtn">←</button>
+        <span class="status" id="statusEl">बचत भयो ✓</span>
+      </div>
+      <input type="text" id="titleInput" class="title-input" placeholder="शीर्षक लेख्नुहोस्..." value="${escapeHtml(note.title||'')}">
+      <div class="meta-row">${formatTime(note.updatedAt)} · ${wordCount} शब्द</div>
+      <textarea id="bodyInput" class="body-textarea" placeholder="यहाँ लेख्न सुरु गर्नुहोस्...">${note.content||''}</textarea>
+    `;
+    document.getElementById('titleInput').addEventListener('input', (e) => {
+      updateActiveNote('title', e.target.value);
+    });
+    document.getElementById('bodyInput').addEventListener('input', (e) => {
+      updateActiveNote('content', e.target.value);
+      updateMetaRow();
+    });
+    const backBtn = document.getElementById('backBtn');
+    if(backBtn) backBtn.addEventListener('click', () => setMobileOpen(false));
+  }
+
+  function updateMetaRow(){
+    const note = state.notes.find(n => n.id === state.activeId);
+    if(!note) return;
+    const wordCount = (note.content||'').trim().split(/\s+/).filter(Boolean).length;
+    const metaEl = document.querySelector('.meta-row');
+    if(metaEl) metaEl.textContent = formatTime(note.updatedAt) + ' · ' + wordCount + ' शब्द';
+  }
+
+  function render(){
+    renderSidebarOnly();
+    renderEditor();
+  }
+
+  newNoteBtn.addEventListener('click', createNote);
+  searchInput.addEventListener('input', (e) => {
+    state.filter = e.target.value;
+    renderSidebarOnly();
+  });
+
+  loadNotes();
+})();
+</script>
+
+</body>
+</html>
