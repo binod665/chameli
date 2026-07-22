@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>मेरा नोटहरू — chameli.com.np</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Baloo+2:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ===== लगइन / साइनअप स्क्रिन ===== -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-card">
+    <div class="brand">
+      <span class="brand-fold"></span>
+      <h1>chameli<span class="brand-dot">.</span>notes</h1>
+      <p class="brand-tag">तपाईंका सोचहरू, सुरक्षित र सधैंको लागि</p>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">लगइन</button>
+      <button class="auth-tab" data-tab="signup">नयाँ खाता</button>
+    </div>
+
+    <form id="login-form" class="auth-form">
+      <label>इमेल
+        <input type="email" id="login-email" required placeholder="you@example.com" autocomplete="email" />
+      </label>
+      <label>पासवर्ड
+        <input type="password" id="login-password" required placeholder="••••••••" autocomplete="current-password" />
+      </label>
+      <button type="submit" class="btn-primary">लगइन गर्नुहोस्</button>
+      <p class="auth-msg" id="login-msg"></p>
+    </form>
+
+    <form id="signup-form" class="auth-form hidden">
+      <label>इमेल
+        <input type="email" id="signup-email" required placeholder="you@example.com" autocomplete="email" />
+      </label>
+      <label>पासवर्ड
+        <input type="password" id="signup-password" required placeholder="कम्तिमा ६ अक्षर" autocomplete="new-password" />
+      </label>
+      <button type="submit" class="btn-primary">खाता बनाउनुहोस्</button>
+      <p class="auth-msg" id="signup-msg"></p>
+    </form>
+
+    <button id="guest-btn" class="btn-ghost">बिना लगइन प्रयोग गर्नुहोस् (यो यन्त्रमा मात्र)</button>
+  </div>
+</div>
+
+<!-- ===== मुख्य नोट एप ===== -->
+<div id="app-screen" class="app-screen hidden">
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="brand-fold small"></span>
+      <h1 class="app-title">मेरा नोटहरू</h1>
+    </div>
+    <div class="topbar-right">
+      <input type="search" id="search-box" placeholder="नोट खोज्नुहोस्..." />
+      <span id="user-email" class="user-email"></span>
+      <button id="logout-btn" class="btn-ghost small">लगआउट</button>
+    </div>
+  </header>
+
+  <main class="notes-grid" id="notes-grid">
+    <!-- नोट कार्डहरू यहाँ JS ले थप्छ -->
+  </main>
+
+  <p id="empty-state" class="empty-state hidden">
+    अहिलेसम्म कुनै नोट छैन। तल दायाँतिरको <strong>+</strong> बटन थिचेर पहिलो नोट लेख्नुहोस्।
+  </p>
+
+  <button id="fab-add" class="fab" title="नयाँ नोट">+</button>
+</div>
+
+<!-- ===== नोट लेख्ने / सम्पादन मोडल ===== -->
+<div id="editor-overlay" class="editor-overlay hidden">
+  <div class="editor-card">
+    <div class="editor-top">
+      <input type="text" id="note-title" placeholder="शीर्षक" />
+      <div class="color-picker" id="color-picker">
+        <button class="color-dot" data-color="yellow" style="background:#F4CE6B"></button>
+        <button class="color-dot" data-color="rose" style="background:#F0A3A3"></button>
+        <button class="color-dot" data-color="mint" style="background:#9FD8C4"></button>
+        <button class="color-dot" data-color="sky" style="background:#9BC4E8"></button>
+        <button class="color-dot" data-color="paper" style="background:#EDE6D6"></button>
+      </div>
+    </div>
+    <textarea id="note-content" placeholder="यहाँ आफ्नो नोट लेख्नुहोस्..."></textarea>
+    <div class="editor-bottom">
+      <span id="save-status" class="save-status"></span>
+      <div class="editor-actions">
+        <button id="delete-note-btn" class="btn-danger hidden">मेटाउनुहोस्</button>
+        <button id="close-editor-btn" class="btn-primary">सुरक्षित गरेर बन्द गर्नुहोस्</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js?v=3"></script>
+<script src="app.js?v=3"></script>
+</body>
+</html>
