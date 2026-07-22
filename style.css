@@ -1,0 +1,362 @@
+:root {
+  --paper: #EFE9DD;
+  --ink: #2B2620;
+  --ink-soft: #6B6153;
+  --accent: #D98A1B;
+  --accent-deep: #A85F14;
+  --card-line: rgba(43,38,32,0.08);
+  --yellow: #F4CE6B;
+  --rose: #F0A3A3;
+  --mint: #9FD8C4;
+  --sky: #9BC4E8;
+  --paper-tag: #EDE6D6;
+  --shadow: 0 6px 18px rgba(43,38,32,0.10);
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  min-height: 100vh;
+}
+
+.hidden { display: none !important; }
+
+/* ===== ब्रान्ड / फोल्ड-कर्नर सिग्नेचर ===== */
+.brand-fold {
+  display: inline-block;
+  width: 34px;
+  height: 34px;
+  background: linear-gradient(135deg, var(--yellow) 0%, var(--yellow) 48%, var(--paper) 50%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 60%);
+  border-radius: 4px 4px 4px 0;
+  box-shadow: var(--shadow);
+  position: relative;
+}
+.brand-fold::after {
+  content: "";
+  position: absolute;
+  top: 0; right: 0;
+  width: 12px; height: 12px;
+  background: var(--paper);
+  clip-path: polygon(100% 0, 0 0, 100% 100%);
+}
+.brand-fold.small { width: 26px; height: 26px; }
+
+/* ===== लगइन स्क्रिन ===== */
+.auth-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 12% 15%, rgba(217,138,27,0.10), transparent 45%),
+    radial-gradient(circle at 88% 85%, rgba(159,216,196,0.18), transparent 45%),
+    var(--paper);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+  background: #FBF8F1;
+  border: 1px solid var(--card-line);
+  border-radius: 20px;
+  padding: 32px 28px;
+  box-shadow: var(--shadow);
+}
+
+.brand { text-align: center; margin-bottom: 22px; }
+.brand h1 {
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 700;
+  font-size: 1.7rem;
+  margin: 10px 0 4px;
+  color: var(--ink);
+}
+.brand-dot { color: var(--accent); }
+.brand-tag { font-size: 0.85rem; color: var(--ink-soft); margin: 0; }
+
+.auth-tabs {
+  display: flex;
+  background: var(--paper-tag);
+  border-radius: 999px;
+  padding: 4px;
+  margin-bottom: 20px;
+}
+.auth-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 9px 0;
+  border-radius: 999px;
+  font-family: inherit;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.auth-tab.active {
+  background: var(--ink);
+  color: var(--paper-tag);
+}
+
+.auth-form { display: flex; flex-direction: column; gap: 14px; }
+.auth-form label {
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.auth-form input {
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 11px 13px;
+  border-radius: 10px;
+  border: 1px solid var(--card-line);
+  background: #fff;
+  color: var(--ink);
+}
+.auth-form input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.btn-primary {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: none;
+  background: var(--accent);
+  color: #FFF9EF;
+  cursor: pointer;
+  transition: background .2s ease, transform .1s ease;
+}
+.btn-primary:hover { background: var(--accent-deep); }
+.btn-primary:active { transform: scale(0.98); }
+
+.btn-ghost {
+  font-family: inherit;
+  font-size: 0.82rem;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px dashed var(--card-line);
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  width: 100%;
+  margin-top: 16px;
+}
+.btn-ghost.small { width: auto; margin: 0; padding: 7px 12px; }
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent-deep); }
+
+.btn-danger {
+  font-family: inherit;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(200,60,50,0.35);
+  background: transparent;
+  color: #A83A2E;
+  cursor: pointer;
+}
+.btn-danger:hover { background: rgba(200,60,50,0.08); }
+
+.auth-msg { font-size: 0.8rem; min-height: 1em; color: #A83A2E; margin: 0; }
+
+/* ===== एप स्क्रिन ===== */
+.app-screen { min-height: 100vh; padding: 20px 28px 100px; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+.topbar-left { display: flex; align-items: center; gap: 10px; }
+.app-title {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1.4rem;
+  margin: 0;
+}
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+#search-box {
+  font-family: inherit;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--card-line);
+  background: #FBF8F1;
+  min-width: 200px;
+}
+.user-email {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+
+/* ===== नोट ग्रिड (मेसनरी जस्तै) ===== */
+.notes-grid {
+  column-count: 4;
+  column-gap: 18px;
+}
+@media (max-width: 1100px) { .notes-grid { column-count: 3; } }
+@media (max-width: 780px)  { .notes-grid { column-count: 2; } }
+@media (max-width: 520px)  { .notes-grid { column-count: 1; } }
+
+.note-card {
+  break-inside: avoid;
+  margin-bottom: 18px;
+  border-radius: var(--radius);
+  padding: 18px 18px 14px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  position: relative;
+  transition: transform .15s ease;
+  border: 1px solid rgba(43,38,32,0.06);
+}
+.note-card:hover { transform: translateY(-2px); }
+.note-card::after {
+  content: "";
+  position: absolute;
+  top: 0; right: 0;
+  width: 16px; height: 16px;
+  background: rgba(43,38,32,0.06);
+  clip-path: polygon(100% 0, 0 0, 100% 100%);
+  border-radius: 0 var(--radius) 0 0;
+}
+.note-title { font-weight: 700; font-size: 1.02rem; margin: 0 0 8px; }
+.note-body {
+  font-size: 0.88rem;
+  color: var(--ink);
+  white-space: pre-wrap;
+  max-height: 220px;
+  overflow: hidden;
+  margin: 0 0 10px;
+}
+.note-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: rgba(43,38,32,0.55);
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--ink-soft);
+  margin-top: 60px;
+  font-size: 0.95rem;
+}
+
+.fab {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: #FFF9EF;
+  font-size: 1.8rem;
+  line-height: 1;
+  box-shadow: 0 8px 22px rgba(168,95,20,0.35);
+  cursor: pointer;
+  transition: transform .15s ease, background .2s ease;
+}
+.fab:hover { background: var(--accent-deep); transform: scale(1.05); }
+
+/* ===== नोट सम्पादन मोडल ===== */
+.editor-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(43,38,32,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 50;
+}
+.editor-card {
+  width: 100%;
+  max-width: 560px;
+  max-height: 86vh;
+  background: #FBF8F1;
+  border-radius: 18px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+}
+.editor-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+#note-title {
+  flex: 1;
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  outline: none;
+  color: var(--ink);
+}
+.color-picker { display: flex; gap: 6px; }
+.color-dot {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+.color-dot.selected { border-color: var(--ink); }
+
+#note-content {
+  flex: 1;
+  min-height: 220px;
+  resize: vertical;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.editor-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--card-line);
+  padding-top: 12px;
+}
+.save-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+}
+.editor-actions { display: flex; gap: 10px; }
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: #FBF8F1;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  box-shadow: var(--shadow);
+  z-index: 100;
+}
