@@ -3,8 +3,6 @@
 // Supabase auth + notes CRUD
 // ============================================================
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 const GUEST_KEY = "chameli_guest_notes_v1";
 let isGuest = false;
 let currentUser = null;
@@ -49,7 +47,7 @@ function showToast(msg) {
   showToast._t = setTimeout(() => toast.classList.add("hidden"), 2200);
 }
 
-// ---------- Auth tab switching ----------
+// ---------- Auth tab switching (सधैं काम गर्ने, Supabase भन्दा अगाडि सेटअप) ----------
 document.querySelectorAll(".auth-tab").forEach(tab => {
   tab.addEventListener("click", () => {
     document.querySelectorAll(".auth-tab").forEach(t => t.classList.remove("active"));
@@ -60,10 +58,26 @@ document.querySelectorAll(".auth-tab").forEach(tab => {
   });
 });
 
+// ---------- Supabase क्लाइन्ट (गल्ती भए पनि UI नरोकिने) ----------
+let supabase = null;
+try {
+  if (!window.supabase) {
+    throw new Error("Supabase लाइब्रेरी लोड भएन। इन्टरनेट कनेक्सन वा CDN ब्लक भएको हुनसक्छ।");
+  }
+  if (!SUPABASE_URL || SUPABASE_URL.includes("xxxxxxxxxxxx")) {
+    throw new Error("config.js मा अझै placeholder URL/key छ। वास्तविक Project URL र anon key राख्नुहोस्।");
+  }
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} catch (err) {
+  console.error("Supabase सेटअप त्रुटि:", err.message);
+  showToast("⚠️ " + err.message);
+}
+
 // ---------- Signup ----------
 signupForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   signupMsg.textContent = "";
+  if (!supabase) { signupMsg.textContent = "Supabase जोडिएको छैन — config.js जाँच्नुहोस्।"; return; }
   const email = document.getElementById("signup-email").value.trim();
   const password = document.getElementById("signup-password").value;
   const { data, error } = await supabase.auth.signUp({ email, password });
@@ -80,6 +94,7 @@ signupForm.addEventListener("submit", async (e) => {
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   loginMsg.textContent = "";
+  if (!supabase) { loginMsg.textContent = "Supabase जोडिएको छैन — config.js जाँच्नुहोस्।"; return; }
   const email = document.getElementById("login-email").value.trim();
   const password = document.getElementById("login-password").value;
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -120,6 +135,7 @@ async function enterApp(user) {
 
 // ---------- Check existing session on page load ----------
 (async function checkSession() {
+  if (!supabase) return;
   const { data } = await supabase.auth.getSession();
   if (data.session) {
     await enterApp(data.session.user);
